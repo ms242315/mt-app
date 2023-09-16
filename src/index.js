@@ -21,7 +21,7 @@ function Form() {
       name: 'sample'
   });
   
-  const onSubmit = (data: any): void => {
+  const onSubmit = (data) => {
       console.log(data);
 
       // フォームを空にする。
@@ -32,22 +32,23 @@ function Form() {
     <div>
       <p><label>
         本文：
-        <textarea value="" />
+        <textarea {...register('body')} />
       </label></p>
       <p>
-        エスケープ：
-        {fields.map((field: any, index: number) => (
-                  <div key={field.id}>
-                      <label>タスクNo.{index}：</label>
-                      <div>
-                          <input {...register(`sample.${index}.title`)} placeholder='ここにタスク名を入力してください' />
-                      </div>
-                  </div>
-              ))}
+        エスケープ：<br />
+        {fields.map((field, index) => (
+          <div key={field.id}>
+            <input {...register(`sample.${index}.title`)} />
+            =&gt;
+            <input {...register(`sample.${index}.title`)} />
+            <button onClick={() => remove(index)}>削除</button>
+          </div>
+        ))}
         <button type="button" onClick={() => append({title: ''})}>
           後ろに追加
         </button>
       </p>
+      <input type='submit' onClick={handleSubmit(onSubmit)} />
     </div>
   );
 }
