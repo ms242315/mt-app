@@ -10,60 +10,60 @@ import { Button, FormControl } from 'react-bootstrap'
 import { useForm, useFieldArray } from "react-hook-form"
 
 function Form() {
-  const { register, handleSubmit, setValue, getValues, control, reset } = useForm({
-      defaultValues: {
-        repl: [
-          {
-              from: '',
-              to: ''
-          }
-        ],
-        chec: [
-          {
-              body: ''
-          }
-        ],
-      }
+  const { register, handleSubmit, setValue, getValues, control } = useForm({
+    defaultValues: {
+      repl: [
+        {
+            from: '',
+            to: ''
+        }
+      ],
+      chec: [
+        {
+            body: ''
+        }
+      ],
+    }
   });
   const { fields: repl_fields, append: repl_append, remove: repl_remove } = useFieldArray({
-      control,
-      name: 'repl'
+    control,
+    name: 'repl'
   });
   const { fields: chec_fields, append: chec_append, remove: chec_remove } = useFieldArray({
-      control,
-      name: 'chec'
+    control,
+    name: 'chec'
   });
   
   const onSubmit = (data) => {
-      console.log(data);
+    console.log(data);
 
-      let mailBody = getValues('body');
-      let repls = getValues('repl');
-      for (let i = 0; i < repls.length; i++) {
-        let pair = repls[i];
-        mailBody = mailBody.split(pair.from).join(pair.to);
-      }
-      mailBody = mailBody + "\n";
+    let mailBody = getValues('body');
+    let repls = getValues('repl');
+    for (let i = 0; i < repls.length; i++) {
+      let pair = repls[i];
+      mailBody = mailBody.split(pair.from).join(pair.to);
+    }
+    mailBody = mailBody + "\n";
 
-      let checBody = "";
-      let checs = getValues('chec');
-      for (let i = 0; i < checs.length; i++) {
-        let chec = checs[i];
-        checBody += "- " + chec.body + "\n";
-      }
+    let checBody = "";
+    let checs = getValues('chec');
+    for (let i = 0; i < checs.length; i++) {
+      let chec = checs[i];
+      checBody += "- " + chec.body + "\n";
+    }
 
-      // let result = "```\n" + mailBody + "\n```\n";
-      // result += "以下の項目のうち、上記の文章に含まれていない項目を挙げてください。\n";
-      // result += checBody;
+    // let result = "```\n" + mailBody + "\n```\n";
+    // result += "以下の項目のうち、上記の文章に含まれていない項目を挙げてください。\n";
+    // result += checBody;
 
-      let result = "#命令書\n";
-      result += "- 次のメール本文にチェックリストの項目が漏れなく記述されているか教えてください。\n\n";
-      result += "#メール本文\n" + mailBody + "\n";
-      result += "#チェックリスト\n" + checBody;
+    let result = "#命令書\n";
+    result += "- 次のメール本文にチェックリストの項目が漏れなく記述されているか教えてください。\n\n";
+    result += "#メール本文\n" + mailBody + "\n";
+    result += "#チェックリスト\n" + checBody;
 
-      setValue('result', result);
+    setValue('result', result);
 
-      copyToClipboard(result)
+    copyToClipboard(result)
   };
 
   const copyToClipboard = async (text) => {
