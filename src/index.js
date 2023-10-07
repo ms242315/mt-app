@@ -9,6 +9,8 @@ import { Button, FormControl } from 'react-bootstrap'
 
 import { useForm, useFieldArray } from "react-hook-form"
 
+import { Configuration, OpenAIApi } from "openai";
+
 function Form() {
   const { register, handleSubmit, setValue, getValues, control } = useForm({
     defaultValues: {
@@ -35,22 +37,8 @@ function Form() {
   });
   
   const onSubmit = (data) => {
-    console.log(data);
-
-    let mailBody = getValues('body');
-    let repls = getValues('repl');
-    for (let i = 0; i < repls.length; i++) {
-      let pair = repls[i];
-      mailBody = mailBody.split(pair.from).join(pair.to);
-    }
-    mailBody = mailBody + "\n";
-
-    let checBody = "";
-    let checs = getValues('chec');
-    for (let i = 0; i < checs.length; i++) {
-      let chec = checs[i];
-      checBody += "- " + chec.body + "\n";
-    }
+    const mailBody = getMailBody(data);
+    const checBody = getChecBody(data);
 
     // let result = "```\n" + mailBody + "\n```\n";
     // result += "以下の項目のうち、上記の文章に含まれていない項目を挙げてください。\n";
@@ -65,6 +53,70 @@ function Form() {
 
     copyToClipboard(result)
   };
+
+  const onAPISubmit = async (data) => {
+    const mailBody = getMailBody(data);
+    const checBody = getChecBody(data);
+
+    // let result = "```\n" + mailBody + "\n```\n";
+    // result += "以下の項目のうち、上記の文章に含まれていない項目を挙げてください。\n";
+    // result += checBody;
+
+    let result = "#命令書\n";
+    result += "- 次のメール本文にチェックリストの項目が漏れなく記述されているか教えてください。\n\n";
+    result += "#メール本文\n" + mailBody + "\n";
+    result += "#チェックリスト\n" + checBody;
+    
+    setValue('apiresult', getValues('apikey'));
+
+    // const configuration = new Configuration({
+    //   apiKey: getValues('apikey'),
+    // });
+    // const openai = new OpenAIApi(configuration);
+    // const completion = await openai.createChatCompletion({
+    //   model: "gpt-3.5-turbo",
+    //   messages: [
+    //     {
+    //       role: "user",
+    //       content: result,
+    //     },
+    //   ],
+    // });
+    // const answer = completion.data;
+    // const errors = answer.split(' ');
+
+    // let divresult = "チェック結果：";
+    // let checs = getValues('chec');
+    // for (let i = 0; i < checs.length; i++) {
+    //   let chec = checs[i];
+    //   if (errors.contains(chec)) {
+    //     // エラー
+    //   } else {
+    //     // 正常
+    //   }
+    // }
+  };
+
+  const getMailBody = (data) => {
+    let mailBody = getValues('body');
+    let repls = getValues('repl');
+    for (let i = 0; i < repls.length; i++) {
+      let pair = repls[i];
+      mailBody = mailBody.split(pair.from).join(pair.to);
+    }
+    mailBody = mailBody + "\n";
+    return mailBody;
+  }
+
+  const getChecBody = (data) => {
+    let checBody = "";
+    let checs = getValues('chec');
+    for (let i = 0; i < checs.length; i++) {
+      let chec = checs[i];
+      checBody += "- " + chec.body + "\n";
+    }
+    return checBody;
+  }
 
   const copyToClipboard = async (text) => {
     await global.navigator.clipboard.writeText(text);
@@ -107,13 +159,25 @@ function Form() {
           </Button>
         </table>
       </p>
+      <hr />
       <p>
-        <Button onClick={handleSubmit(onSubmit)}>出力</Button>　
-        <Button onClick={handleSubmit(onSubmit)}>出力してコピー</Button>
+        <h2>ChatGPT</h2>
+        <p>
+          <label>
+            APIキー：
+            <FormControl type="password" {...register('apikey')} />
+          </label>
+          <Button onClick={handleSubmit(onAPISubmit)}>送信</Button>
+        </p>
+        <FormControl as="textarea" rows={10} cols={100} {...register('apiresult')} readOnly />
       </p>
       <hr />
       <p>
         <h2>ChatGPT</h2>
+        <p>
+          <Button onClick={handleSubmit(onSubmit)}>出力</Button>　
+          <Button onClick={handleSubmit(onSubmit)}>出力してコピー</Button>
+        </p>
         <FormControl as="textarea" rows={10} cols={100} {...register('result')} />
       </p>
       <div class="footer-margin"></div>
