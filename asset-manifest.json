@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/mt-app/static/css/main.933040a8.css",
+    "main.js": "/mt-app/static/js/main.47b53a04.js",
+    "static/js/787.955276f1.chunk.js": "/mt-app/static/js/787.955276f1.chunk.js",
+    "index.html": "/mt-app/index.html",
+    "main.933040a8.css.map": "/mt-app/static/css/main.933040a8.css.map",
+    "main.47b53a04.js.map": "/mt-app/static/js/main.47b53a04.js.map",
+    "787.955276f1.chunk.js.map": "/mt-app/static/js/787.955276f1.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.933040a8.css",
+    "static/js/main.47b53a04.js"
+  ]
+}
