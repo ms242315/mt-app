@@ -10,6 +10,7 @@ import { Button, FormControl } from 'react-bootstrap'
 import { useForm, useFieldArray } from "react-hook-form"
 
 import { Configuration, OpenAIApi } from "openai";
+import kuromoji from "kuromoji";
 
 function Form() {
   const { register, handleSubmit, setValue, getValues, control } = useForm({
